@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import './App.css';
 
@@ -40,7 +40,7 @@ function App() {
     if (allFieldsValid) {
       runSimulation();
     }
-  }, [formData]);
+  }, [formData, runSimulation]);
 
   const showMessage = (msg, type = 'info') => {
     setMessage(msg);
@@ -59,7 +59,7 @@ function App() {
     }));
   };
 
-  const runSimulation = async () => {
+  const runSimulation = useCallback(async () => {
     try {
       const response = await axios.post(`${API_BASE_URL}/simulate`, formData);
       if (response.data.success) {
@@ -68,7 +68,7 @@ function App() {
     } catch (error) {
       console.error('Simulation error:', error);
     }
-  };
+  }, [formData]);
 
   const saveScenario = async () => {
     if (!formData.scenario_name.trim()) {
