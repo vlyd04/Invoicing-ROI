@@ -1,0 +1,100 @@
+## 1. Planned Approach and Architecture
+
+The project follows a **full-stack MERN-style architecture** (React + Express + MongoDB) to quickly build, test, and deploy the ROI Simulator.
+
+**Architecture overview:**
+
+* **Frontend (React):**
+
+  * A single-page web app that allows users to input business metrics, run quick ROI simulations, and view live results.
+  * Includes forms for user inputs, dynamic results visualization, scenario management, and a gated report download modal.
+  * Communicates with backend REST APIs via `axios`.
+
+* **Backend (Express + Node.js):**
+
+  * Handles all calculations and business logic using internal constants (kept server-side to maintain the “positive bias” logic).
+  * Provides REST API endpoints for:
+
+    * Running simulations (`/simulate`)
+    * Managing saved scenarios (`/scenarios`)
+    * Generating gated reports (`/report/generate`)
+  * Generates PDF/HTML reports using server-side rendering (Puppeteer or html-pdf).
+  * Validates all user inputs and ensures outputs are consistent and favorable.
+
+* **Database (MongoDB):**
+
+  * Stores all scenarios, user emails (for report gating), and generated report metadata.
+  * Uses a simple schema for quick reads/writes, ensuring persistence across sessions.
+  * MongoDB Atlas (cloud) or local instance can be used depending on setup.
+
+**Flow summary:**
+
+1. User enters data in the React form.
+2. React sends data to `/simulate` via REST API.
+3. Express server computes results using internal constants and returns JSON.
+4. User can save results (POST `/scenarios`), fetch them later, or download a report (via `/report/generate`).
+5. MongoDB stores all scenario and lead data persistently.
+
+---
+
+## 2. Technologies, Frameworks, and Database
+
+| Layer        | Technology               | Purpose                                                            |
+| ------------ | ------------------------ | ------------------------------------------------------------------ |
+| **Frontend** | **React (Vite)**         | Build fast and responsive single-page UI.                          |
+|              | React Hooks              | Manage state and side effects (input changes, API calls).          |
+|              | Axios                    | Handle HTTP communication with the backend.                        |
+|              | Tailwind CSS / Bootstrap | Simple, clean UI styling.                                          |
+| **Backend**  | **Node.js + Express**    | REST API server for calculations, persistence, and PDF generation. |
+|              | CORS & Body-parser       | Handle cross-origin requests and JSON input parsing.               |
+|              | Puppeteer / html-pdf     | Generate downloadable PDF reports.                                 |
+| **Database** | **MongoDB**              | Store simulation data, scenarios, and user emails.                 |
+|              | Mongoose                 | ODM to define schemas and interact with MongoDB.                   |
+
+**Optional Tools**
+
+* **Nodemon** for auto-reload in development.
+* **dotenv** for managing environment variables (Mongo URI, ports, etc.).
+* **ngrok** for exposing local server for quick demo sharing.
+
+---
+
+## 3. Key Features and Functionality
+
+1. **Quick ROI Simulation**
+
+   * Users input details like invoice volume, staff size, wages, and error rate.
+   * Instantly calculates and displays monthly savings, payback period, and ROI.
+   * Built-in bias ensures results always show automation as beneficial.
+
+2. **Scenario Management (CRUD)**
+
+   * Save, load, and delete simulations by scenario name.
+   * Each scenario stores both input data and the computed results.
+   * Fetch existing scenarios from MongoDB via `/scenarios` endpoints.
+
+3. **Gated Report Generation**
+
+   * Generates a downloadable PDF/HTML report.
+   * Requires user to enter an email before report generation (lead capture).
+   * Stores email and report metadata in MongoDB for future reference.
+
+4. **Bias-Favored Output**
+
+   * Backend applies constants and a “boost factor” to ensure positive ROI.
+   * Manual vs. automated cost comparison always favors automation.
+
+5. **Responsive, Modern UI**
+
+   * Single-page React app with real-time feedback.
+   * Clean layout for inputs, outputs, and saved scenarios.
+   * Smooth transitions and responsive design for all devices.
+
+6. **Persistent Data Storage**
+
+   * All scenarios and user emails are stored in MongoDB, ensuring data persists even after restarts.
+
+7. **Developer-Friendly Setup**
+
+   * Simple environment setup using `npm run dev` for both frontend and backend.
+   * Ready for local development or quick deployment to Render/Vercel/Atlas.
