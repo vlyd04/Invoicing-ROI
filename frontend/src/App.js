@@ -27,21 +27,6 @@ function App() {
   const [showReportModal, setShowReportModal] = useState(false);
   const [currentScenarioId, setCurrentScenarioId] = useState(null);
 
-  useEffect(() => {
-    loadScenarios();
-  }, []);
-
-  useEffect(() => {
-    const allFieldsValid = Object.entries(formData).every(([key, value]) => {
-      if (key === 'scenario_name') return true;
-      return value !== '' && value >= 0;
-    });
-    
-    if (allFieldsValid) {
-      runSimulation();
-    }
-  }, [formData, runSimulation]);
-
   const showMessage = (msg, type = 'info') => {
     setMessage(msg);
     setMessageType(type);
@@ -69,6 +54,21 @@ function App() {
       console.error('Simulation error:', error);
     }
   }, [formData]);
+
+  useEffect(() => {
+    loadScenarios();
+  }, []);
+
+  useEffect(() => {
+    const allFieldsValid = Object.entries(formData).every(([key, value]) => {
+      if (key === 'scenario_name') return true;
+      return value !== '' && value >= 0;
+    });
+    
+    if (allFieldsValid) {
+      runSimulation();
+    }
+  }, [formData, runSimulation]);
 
   const saveScenario = async () => {
     if (!formData.scenario_name.trim()) {
