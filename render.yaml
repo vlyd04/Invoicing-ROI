@@ -1,0 +1,4 @@
+# Render.com Build Configuration
+buildCommand: cd backend && npm install
+startCommand: cd backend && npm start
+environment: node
